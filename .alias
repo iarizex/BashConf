@@ -1,0 +1,124 @@
+#============================================================
+#
+#  ALIASES AND FUNCTIONS
+#
+#  Arguably, some functions defined here are quite big.
+#  If you want to make this file smaller, these functions can
+#+ be converted into scripts and removed from here.
+#
+#============================================================
+
+#-------------------
+# Personnal Aliases
+#-------------------
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+# -> Prevents accidentally clobbering files.
+alias mkdir='mkdir -p'
+mkcd() { mkdir -p $1; cd $1; }
+
+alias h='history'
+alias j='jobs -l'
+alias which='type -a'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+alias cd..='cd ..'
+alias cd...='cd ...'
+alias cd....='cd ....'
+
+# Pretty-print of some PATH variables:
+alias path='echo -e ${PATH//:/\\n}'
+alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
+
+
+alias du='du -kh'    # Makes a more readable output.
+alias df='df -kTh'
+
+#-------------------------------------------------------------
+# The 'ls' family (this assumes you use a recent GNU ls).
+#-------------------------------------------------------------
+# Add colors for filetype and  human-readable sizes by default on 'ls':
+alias ls='ls -h --color'
+alias lx='ls -lXB'         #  Sort by extension.
+alias lk='ls -lSr'         #  Sort by size, biggest last.
+alias lt='ls -ltr'         #  Sort by date, most recent last.
+alias lc='ls -ltcr'        #  Sort by/show change time,most recent last.
+alias lu='ls -ltur'        #  Sort by/show access time,most recent last.
+
+# The ubiquitous 'll': directories first, with alphanumeric sorting:
+alias ll="ls -lv --group-directories-first"
+alias lm='ll |more'        #  Pipe through 'more'
+alias lr='ll -R'           #  Recursive ls.
+alias la='ll -A'           #  Show hidden files.
+alias tree='tree -Csuh'    #  Nice alternative to 'recursive ls' ...
+
+
+#-------------------------------------------------------------
+# PacMan and ExPac aliases
+#-------------------------------------------------------------
+# List package sizes with their dependencies
+alias pac-ls='expac -H M '%m\t%n' | sort -h'
+# List explicitly installed packages not in base nor base-devel with size and description
+alias pac-not-base='expac -H M "%011m\t%-20n\t%10d" $(comm -23 <(pacman -Qqen | sort) <(pacman -Qqg base base-devel | sort)) | sort -n'
+# List the 20 last installed packages
+alias pac-last-installed="expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n 20"
+# List all installed packages unrequired by other packages, and which are not in the base or base-devel groups
+alias pac-nb-nr='expac -HM '%-20n\t%10d' $(comm -23 <(pacman -Qqt | sort) <(pacman -Qqg base base-devel | sort))'
+# List all development/unstable packages
+alias pac-dev="pacman -Qq | grep -Ee '-(cvs|svn|git|hg|bzr|darcs)$'"
+# List orphan packages
+alias pac-orph='pacman -Qtdq'
+# Remove orphan packages
+alias pac-orph-rm='pacman -Rns $(pacman -Qtdq)'
+# Getting the dependencies list of several packages
+pac-depen() { expac -l '\n' %E -S $1 | sort -u; }
+# Back-up the local pacman database
+alias pac-bckup='tar -cjf pacman_database.tar.bz2 /var/lib/pacman/local'
+# The database can be restored by moving the pacman_database.tar.bz2 file into the / directory and executing:
+alias pac-db-restore='tar -xjvf pacman_database.tar.bz2'
+
+#-------------------------------------------------------------
+# Tailoring 'less'
+#-------------------------------------------------------------
+
+alias more='less'
+export PAGER=less
+export LESSCHARSET='latin1'
+export LESSOPEN='|/usr/bin/lesspipe.sh %s 2>&-'
+                # Use this if lesspipe.sh exists.
+export LESS='-i -N -w  -z-4 -g -e -M -X -F -R -P%t?f%f \
+:stdin .?pb%pb\%:?lbLine %lb:?bbByte %bb:-...'
+
+# LESS man page colors (makes Man pages more readable).
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+
+#-------------------------------------------------------------
+# Spelling typos - highly personnal and keyboard-dependent :-)
+#-------------------------------------------------------------
+
+alias xs='cd'
+alias vf='cd'
+alias moer='more'
+alias moew='more'
+alias kk='ll'
+
+# Aliases that use xtitle
+alias top='xtitle Processes on $HOST && top'
+alias make='xtitle Making $(basename $PWD) ; make'
+
+# Local Variables:
+# mode:shell-script
+# sh-shell:bash
+# End:
